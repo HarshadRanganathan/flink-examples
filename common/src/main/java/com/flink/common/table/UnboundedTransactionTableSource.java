@@ -24,7 +24,8 @@ public class UnboundedTransactionTableSource implements StreamTableSource<Row>, 
     public DataStream<Row> getDataStream(StreamExecutionEnvironment streamExecutionEnvironment) {
         return streamExecutionEnvironment
                 .addSource(new TransactionSource())
-                .map(transactionRowMapFunction());
+                .map(transactionRowMapFunction())
+                .returns(getTableSchema().toRowType());
     }
 
     /**
@@ -35,7 +36,7 @@ public class UnboundedTransactionTableSource implements StreamTableSource<Row>, 
         return transaction -> Row.of(
                 transaction.getAccountId(),
                 new Timestamp(transaction.getTimestamp()),
-                transaction.getAccountId()
+                transaction.getAmount()
         );
     }
 
